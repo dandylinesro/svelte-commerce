@@ -2,12 +2,13 @@
 export async function load(event) {
 	let banners = []
 	const { domain, store } = event.session
-	await GQL_HOME.fetch({ event, variables: { store: store.id } })
-	return { props: { banners, domain, store } }
+	const variables = { store: store.id }
+	await GQL_HOME.fetch({ event, variables })
+	return { props: { banners, domain, store, variables } }
 }
 </script>
 
-<script>
+<script lang="ts">
 import Hero from '$lib/Hero.svelte'
 import { GQL_HOME, GQL_products } from '$houdini'
 import { onMount } from 'svelte'
@@ -28,9 +29,10 @@ export let banners,
 	shoppoProducts = null,
 	loading,
 	domain
+export let variables
 
 let heroBanners
-$: browser && GQL_HOME.fetch({ variables: { store: store.id } })
+$: browser && GQL_HOME.fetch({ variables })
 onMount(async () => {
 	// console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', $GQL_HOME)
 	// GQL_HOME.fetch({ variables: { store: store.id } })

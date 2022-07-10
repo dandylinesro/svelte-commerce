@@ -37,7 +37,7 @@ const seoProps = {
 }
 async function refreshCart() {
 	// await GQL_cart.resetCache()
-	// await GQL_cart.fetch({ variables: { store: store.id }, settings: { policy: 'network-only' } })
+	// await GQL_cart.fetch({ variables: { store: store.id } })
 }
 async function addToCart({ detail }) {
 	const { pid, vid, options } = detail.item
@@ -52,7 +52,7 @@ async function addToCart({ detail }) {
 	}
 	if (qty < 1) toast('Removed from cart', 'success')
 	else toast('Added to the cart', 'success')
-	await GQL_cart.fetch({ variables: { store: store?.id }, settings: { policy: 'network-only' } })
+	// await GQL_cart.fetch({ variables: { store: store?.id } })
 }
 $: cart = $GQL_cart.data?.cart || {}
 </script>

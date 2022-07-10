@@ -1,13 +1,13 @@
 <script context="module" lang="ts">
-export async function load({ url, params, fetch, session, context }) {
+export async function load(event) {
 	let ads, err
-	let addressId = url.searchParams.get('id')
+	let addressId = event.url.searchParams.get('id')
 
 	if (addressId === 'new') {
 		ads = { id: 'new' }
 	} else {
 		ads = (
-			await KQL_Address.query({ fetch, variables: { id: addressId }, settings: { cacheMs: 0 } })
+			await GQL_address.fetch({ event, variables: { id: addressId }, settings: { cacheMs: 0 } })
 		).data?.address
 	}
 	return { props: { err, ads } }
@@ -18,12 +18,7 @@ export async function load({ url, params, fetch, session, context }) {
 import GradiantButton from '$lib/ui/GradiantButton.svelte'
 import Textbox from '$lib/ui/Textbox.svelte'
 import BackButton from '$lib/ui/BackButton.svelte'
-import {
-	KQL_Address,
-	KQL_SaveAddress,
-	KQL_States,
-	KQL_StoreCountries
-} from '$lib/graphql/_kitql/graphqlStores'
+import { GQL_address, GQL_saveAddress, GQL_states, GQL_storeCountries } from '$houdini'
 import Error from '$lib/Error.svelte'
 import { goto } from '$app/navigation'
 import { onMount } from 'svelte'
@@ -32,7 +27,7 @@ import AutoComplete from 'simple-svelte-autocomplete'
 import Select from 'svelte-select'
 import { stringify } from 'postcss'
 
-$: ads = $KQL_Address.data?.address || {}
+$: ads = $GQL_address.data?.address || {}
 let err,
 	loading = false,
 	formChanged = false,
@@ -56,7 +51,7 @@ async function save(ads) {
 	} = ads
 	try {
 		loading = true
-		const { data, errors } = await KQL_SaveAddress.mutate({
+		const { data, errors } = await GQL_saveAddress.mutate({
 			variables: {
 				id,
 				firstName,
@@ -83,14 +78,14 @@ async function save(ads) {
 	}
 }
 onMount(async () => {
-	await KQL_StoreCountries.query({ variables: { store: store?.id, page: 0, limit: 300 } })
+	await GQL_storeCountries.fetch({ variables: { store: store?.id, page: 0, limit: 300 } })
 	// selectedCountry = countries[0]
-	// await KQL_Cities.query({ variables: { limit: 300, page: 0, country: ads.country } })
-	await KQL_States.query({
+	// await GQL_cities.fetch({ variables: { limit: 300, page: 0, country: ads.country } })
+	await GQL_states.fetch({
 		variables: { limit: 300, page: 0, countryCode: ads?.country?.code || ads?.country }
 	})
 	selectedState = { name: ads?.state }
-	const adsCountryA = $KQL_StoreCountries.data?.storeCountries?.data.filter(
+	const adsCountryA = $GQL_storeCountries.data?.storeCountries?.data.filter(
 		(c) => c.code === ads.country
 	)
 	if (adsCountryA) {
@@ -100,14 +95,14 @@ onMount(async () => {
 
 async function onCountryChange() {
 	// selectedCountry = ads.country
-	// await KQL_Cities.query({
+	// await GQL_cities.fetch({
 	// 	variables: { limit: 300, page: 0, country: ads.country },
 	// 	settings: { policy: 'network-only' }
 	// })
 	if (adsCountry) {
 		ads.country = adsCountry.code ? adsCountry.code : adsCountry
 		formChanged = true
-		await KQL_States.query({
+		await GQL_states.fetch({
 			variables: { limit: 300, page: 0, countryCode: ads.country },
 			settings: { policy: 'network-only' }
 		})
@@ -119,8 +114,8 @@ const seoProps = {
 	metadescription: 'Add Address '
 }
 
-$: allCountries = $KQL_StoreCountries.data?.storeCountries
-$: allStates = $KQL_States.data?.states?.data
+$: allCountries = $GQL_storeCountries.data?.storeCountries
+$: allStates = $GQL_states.data?.states?.data
 let stateName = ads?.state
 function stateChanged({ detail }) {
 	console.log('state changed', detail)
@@ -199,8 +194,8 @@ function stateChanged({ detail }) {
 							bind:value="{ads.state}"
 							on:input="{() => (formChanged = true)}">
 							<option value="" selected>-- Select a State --</option>
-							{#if $KQL_States.data?.states.data && $KQL_States.data?.states.data.length}
-								{#each $KQL_States.data?.states.data as c}
+							{#if $GQL_states.data?.states.data && $GQL_states.data?.states.data.length}
+								{#each $GQL_states.data?.states.data as c}
 									{#if c}
 										<option value="{c.name}">
 											{c.name}
@@ -213,7 +208,7 @@ function stateChanged({ detail }) {
 				{/if} -->
 				<div>
 					<h6 class="mb-2 font-semibold">Country</h6>
-					{#if $KQL_StoreCountries.isFetching}
+					{#if $GQL_storeCountries.isFetching}
 						Loading Countries...
 					{:else if allCountries?.count}
 						<Select

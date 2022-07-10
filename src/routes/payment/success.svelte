@@ -12,7 +12,7 @@ import { onMount } from 'svelte'
 
 import OrderAddressDetails from './_OrderAddressDetails.svelte'
 import OrderSuccessSkeleton from './_OrderSuccessSkeleton.svelte'
-import { KQL_MyOrders, KQL_PaySuccessPageHit } from '$lib/graphql/_kitql/graphqlStores'
+import { GQL_myOrders, GQL_paySuccessPageHit } from '$houdini'
 export let id
 onMount(() => {
 	refresh()
@@ -22,7 +22,7 @@ let order = null,
 async function refresh() {
 	try {
 		loading = true
-		order = (await KQL_PaySuccessPageHit.mutate({ variables: { orderId: id } })).data
+		order = (await GQL_paySuccessPageHit.mutate({ variables: { orderId: id } })).data
 			.paySuccessPageHit
 	} catch (e) {
 	} finally {

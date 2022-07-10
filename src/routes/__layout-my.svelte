@@ -1,5 +1,7 @@
 <script context="module" lang="ts">
 import type { Load } from '@sveltejs/kit'
+import { houdiniClient } from '$graphql/client'
+houdiniClient.init()
 export const load: Load = async ({ url, fetch, session }) => {
 	let me = session.me
 	let store = session.store

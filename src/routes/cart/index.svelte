@@ -3,11 +3,10 @@
 </style>
 
 <script context="module" lang="ts">
-export async function load({ url, params, fetch }) {
+export async function load(event) {
 	let cart
 	try {
-		await KQL_Cart.resetCache()
-		await KQL_Cart.queryLoad({ fetch, variables: { store: store.id } })
+		await GQL_cart.fetch({ event, variables: { store: store?.id } })
 		return {
 			props: {}
 		}
@@ -23,7 +22,7 @@ import Cartlist from './_Cartlist.svelte'
 import Weprovides from '$lib/Weprovides.svelte'
 import Pricesummary from '$lib/Pricesummary.svelte'
 import SEO from '$lib/components/SEO/index.svelte'
-import { KQL_AddToCart, KQL_Cart } from '$lib/graphql/_kitql/graphqlStores'
+import { GQL_addToCart, GQL_cart } from '$houdini'
 import { store, toast } from '$lib/util'
 import ProductDetailSkeleton from '../[slug]/_ProductDetailSkeleton.svelte'
 import Errors from '$lib/components/alerts/Errors.svelte'
@@ -37,15 +36,15 @@ const seoProps = {
 	metadescription: 'Your items in shopping bag'
 }
 async function refreshCart() {
-	// await KQL_Cart.resetCache()
-	// await KQL_Cart.queryLoad({ variables: { store: store.id }, settings: { policy: 'network-only' } })
+	// await GQL_cart.resetCache()
+	// await GQL_cart.fetch({ variables: { store: store.id }, settings: { policy: 'network-only' } })
 }
 async function addToCart({ detail }) {
 	const { pid, vid, options } = detail.item
 	const qty = detail.qty
-	const optiData = $KQL_Cart.data
+	const optiData = $GQL_cart.data
 	optiData.cart.currencyCode = `Removing items...`
-	const addToCartRes = await KQL_AddToCart.mutate({
+	const addToCartRes = await GQL_addToCart.mutate({
 		variables: { pid, qty, vid, options }
 	})
 	if (addToCartRes.errors) {
@@ -53,19 +52,19 @@ async function addToCart({ detail }) {
 	}
 	if (qty < 1) toast('Removed from cart', 'success')
 	else toast('Added to the cart', 'success')
-	await KQL_Cart.queryLoad({ variables: { store: store.id }, settings: { policy: 'network-only' } })
+	await GQL_cart.fetch({ variables: { store: store?.id }, settings: { policy: 'network-only' } })
 }
-$: cart = $KQL_Cart.data?.cart || {}
+$: cart = $GQL_cart.data?.cart || {}
 </script>
 
 <SEO {...seoProps} />
 <!-- Whole section start  -->
 <section
 	class="container mx-auto min-h-screen w-full max-w-6xl border-b px-4  py-2 text-gray-800 sm:px-10 sm:py-5 md:py-10 ">
-	{#if $KQL_Cart?.isFetching}
+	{#if $GQL_cart?.isFetching}
 		<Skeleton />
-	{:else if $KQL_Cart?.errors}
-		<Errors errors="{$KQL_Cart.errors}" />
+	{:else if $GQL_cart?.errors}
+		<Errors errors="{$GQL_cart.errors}" />
 	{:else if cart?.qty > 0}
 		<div class="lg:flex lg:justify-center lg:space-x-10 xl:space-x-20">
 			<!-- Cart section start  -->

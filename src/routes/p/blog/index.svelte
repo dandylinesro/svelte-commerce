@@ -1,12 +1,15 @@
-<script context="module">
-export async function load({ url, params, fetch, session, context }) {
+<script context="module" lang="ts">
+import type { LoadEvent } from '@sveltejs/kit'
+
+export async function load(event: LoadEvent) {
 	let search, sort, query, blogs, err, page, count
+	const url = event.url
 	try {
 		search = url.searchParams.get('search')
 		page = url.searchParams.get('page') || 1
 		sort = url.searchParams.get('sort')
 		query = url.searchParams.toString()
-		KQL_Blogs.queryLoad({ fetch, variables: { search, sort, page } })
+		GQL_blogs.fetch({ event, variables: { search, sort, page } })
 		// count = res?.count
 		// console.log(res)
 	} catch (e) {
@@ -20,13 +23,13 @@ export async function load({ url, params, fetch, session, context }) {
 }
 </script>
 
-<script>
+<script lang="ts">
 import SEO from '$lib/components/SEO/index.svelte'
 import { toast } from '$lib/util'
 import ImageLoader from '$lib/components/Image/ImageLoader.svelte'
 import TimeAgo from 'svelte-timeago'
 import Errors from '$lib/components/alerts/Errors.svelte'
-import { KQL_Blogs } from '$lib/graphql/_kitql/graphqlStores'
+import { GQL_blogs } from '$houdini'
 import Pagination from './../../search/_Pagination.svelte'
 
 const seoProps = {
@@ -47,11 +50,11 @@ export let blogs, page, count
 			<hr class="w-10 border-t-4 border-primary-500" />
 		</div>
 
-		{#if $KQL_Blogs?.isFetching}
+		{#if $GQL_blogs?.isFetching}
 			Loading...
-		{:else if $KQL_Blogs?.errors}
-			<Errors errors="{$KQL_Blogs.errors}" />
-		{:else if $KQL_Blogs.data?.blogs.count > 0}
+		{:else if $GQL_blogs?.errors}
+			<Errors errors="{$GQL_blogs.errors}" />
+		{:else if $GQL_blogs.data?.blogs.count > 0}
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 				{#each blogs as b, i}
 					<a

@@ -1,20 +1,15 @@
 <script>
-import {
-	KQL_MyOrderItems,
-	KQL_MyOrders,
-	KQL_MyWishlist,
-	KQL_Reviews
-} from '$lib/graphql/_kitql/graphqlStores'
+import { GQL_myOrderItems, GQL_myOrders, GQL_myWishlist, GQL_reviews } from '$houdini'
 import { store } from '$lib/util'
 import { onMount } from 'svelte'
 export let me
-$: myOrderItems = $KQL_MyOrderItems.data?.myOrderItems
-$: myWishlist = $KQL_MyWishlist.data?.myWishlist
-$: myReviews = $KQL_Reviews.data?.reviews
+$: myOrderItems = $GQL_myOrderItems.data?.myOrderItems
+$: myWishlist = $GQL_myWishlist.data?.myWishlist
+$: myReviews = $GQL_reviews.data?.reviews
 onMount(() => {
-	KQL_MyOrderItems.queryLoad({ variables: { store: store.id } })
-	KQL_Reviews.queryLoad({ variables: { store: store.id } })
-	KQL_MyWishlist.queryLoad({ variables: { store: store.id } })
+	GQL_myOrderItems.fetch({ variables: { store: store.id } })
+	GQL_reviews.fetch({ variables: { store: store.id } })
+	GQL_myWishlist.fetch({ variables: { store: store.id } })
 })
 </script>
 
@@ -23,7 +18,7 @@ onMount(() => {
 		<span class="mr-1  text-lg font-bold sm:text-xl">Hi!</span>
 		<span class="text-sm text-gray-500 sm:text-base">{me?.firstName}</span>
 	</h1>
-	{#if $KQL_MyOrderItems.isFetching}
+	{#if $GQL_myOrderItems.isFetching}
 		Loading
 	{:else if myOrderItems}
 		<div

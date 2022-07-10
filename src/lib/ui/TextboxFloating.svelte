@@ -32,7 +32,7 @@ label {
 }
 
 .input-class {
-	@apply w-full bg-transparent focus:outline-none;
+	@apply w-full bg-transparent;
 }
 
 input:-webkit-autofill,

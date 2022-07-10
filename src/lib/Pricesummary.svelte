@@ -2,7 +2,7 @@
 import { currency } from './util'
 import { spring } from 'svelte/motion'
 import { createEventDispatcher } from 'svelte'
-import { KQL_Cart } from './graphql/_kitql/graphqlStores'
+import { GQL_cart } from '$houdini'
 const dispatch = createEventDispatcher()
 export const btnname = null
 export let nextpage = null
@@ -26,13 +26,13 @@ function submit() {
 	<div class="mt-3">
 		<div class="mt-2 flex items-center justify-between font-medium">
 			<h4>Total item price</h4>
-			<h4>{currency(Math.floor($KQL_Cart.data?.cart.subtotal))}</h4>
+			<h4>{currency(Math.floor($GQL_cart.data?.cart.subtotal))}</h4>
 		</div>
 
-		{#if $KQL_Cart.data?.cart.discount > 0}
+		{#if $GQL_cart.data?.cart.discount > 0}
 			<div class="mt-2 flex items-center justify-between font-medium">
 				<h4>Item discount</h4>
-				<h4>-{currency($KQL_Cart.data?.cart.discount)}</h4>
+				<h4>-{currency($GQL_cart.data?.cart.discount)}</h4>
 			</div>
 		{/if}
 
@@ -51,9 +51,9 @@ function submit() {
 
 	<div class=" my-2 flex items-center justify-between text-lg font-semibold ">
 		<h4>Total</h4>
-		{currency(Math.floor($KQL_Cart.data?.cart.subtotal))}
+		{currency(Math.floor($GQL_cart.data?.cart.subtotal))}
 	</div>
-	{#if $KQL_Cart.data?.cart.qty > 0}
+	{#if $GQL_cart.data?.cart.qty > 0}
 		{#if nextpage}
 			<a
 				href="{nextpage}"

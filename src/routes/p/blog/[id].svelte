@@ -1,8 +1,8 @@
-<script context="module">
-export async function load({ url, params, fetch, session, context }) {
+<script context="module" lang="ts">
+export async function load(event: import('@sveltejs/kit').LoadEvent) {
 	let blog, err
 	try {
-		await KQL_Blog.queryLoad({ fetch, variables: { id: params.id } })
+		await GQL_blog.fetch({ event, variables: { id: event.params.id } })
 		// console.log(res)
 	} catch (e) {
 		err = e
@@ -20,7 +20,7 @@ import SEO from '$lib/components/SEO/index.svelte'
 import { toast } from '$lib/util'
 import ImageLoader from '$lib/components/Image/ImageLoader.svelte'
 import TimeAgo from 'svelte-timeago'
-import { KQL_Blog, KQL_Blogs } from '$lib/graphql/_kitql/graphqlStores'
+import { GQL_blog, GQL_blogs } from '$houdini'
 
 const seoProps = {
 	title: 'Blogs ',
@@ -29,7 +29,7 @@ const seoProps = {
 
 export let err
 
-$: blog = $KQL_Blog.data.blog
+$: blog = $GQL_blog.data.blog
 </script>
 
 <SEO {...seoProps} />

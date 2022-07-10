@@ -22,7 +22,7 @@ import TextboxFloating from '$lib/ui/TextboxFloating.svelte'
 import SEO from '$lib/components/SEO/index.svelte'
 import ImageLoader from '$lib/components/Image/ImageLoader.svelte'
 import { loginUrl } from '$lib/store'
-import { KQL_StoreOne } from '$lib/graphql/_kitql/graphqlStores'
+import { GQL_storeOne } from '$houdini'
 import { onMount } from 'svelte'
 export let store
 const seoProps = {
@@ -30,9 +30,7 @@ const seoProps = {
 	metadescription: 'Reset Password'
 }
 
-onMount(async () => {
-	// await KQL_StoreOne.query({ variables: { id: store?.id } })
-})
+onMount(async () => {})
 
 let loading = false
 let showCurrentPassword = false

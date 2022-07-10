@@ -1,5 +1,5 @@
 <script>
-import { KQL_Settings } from './graphql/_kitql/graphqlStores'
+import { GQL_settings } from '$houdini'
 import GradiantButton from './ui/GradiantButton.svelte'
 import { store } from './util'
 </script>
@@ -11,7 +11,7 @@ import { store } from './util'
 		</div>
 
 		<a
-			href="{$KQL_Settings.data?.settings?.ADMIN_PANEL_LINK}?role=vendor&store=${store.id}"
+			href="{$GQL_settings.data?.settings?.ADMIN_PANEL_LINK}?role=vendor&store=${store.id}"
 			target="_blank"
 			rel="noopener noreferrer">
 			<GradiantButton class="w-60">Join as Chef</GradiantButton>

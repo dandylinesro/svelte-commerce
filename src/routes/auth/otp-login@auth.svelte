@@ -32,7 +32,7 @@ import VerifyOtp from './_VerifyOtp.svelte'
 import SendOtp from './_SendOtp.svelte'
 import { page, session } from '$app/stores'
 import { browser } from '$app/env'
-import { KQL_GetOtp, KQL_StoreOne, KQL_VerifyOtp } from '$lib/graphql/_kitql/graphqlStores'
+import { GQL_getOtp, GQL_storeOne, GQL_verifyOtp } from '$houdini'
 import { onMount } from 'svelte'
 import Cookie from 'cookie-universal'
 const cookies = Cookie()
@@ -47,9 +47,7 @@ const seoProps = {
 // const cookies = Cookie()
 // let store = cookies.get('store')
 
-onMount(async () => {
-	// await KQL_StoreOne.query({ variables: { id: store?.id } })
-})
+onMount(async () => {})
 
 let phone,
 	loading = false,
@@ -60,7 +58,7 @@ async function handleSendOTP(detail) {
 	try {
 		loading = true
 		phone = detail.detail
-		const { data } = await KQL_GetOtp.mutate({ variables: { phone, store: store.id } })
+		const { data } = await GQL_getOtp.mutate({ variables: { phone, store: store.id } })
 		resendAfter = data?.getOtp?.timer
 		otpRequestSend = true
 	} catch (e) {
@@ -75,9 +73,9 @@ async function handleVerifyOtp(detail) {
 		loading = true
 		// console.log(detail)
 		const otp = `${detail.detail}`
-		const data = (await KQL_VerifyOtp.mutate({ variables: { phone, otp, store: store.id } })).data
+		const data = (await GQL_verifyOtp.mutate({ variables: { phone, otp, store: store.id } })).data
 			?.verifyOtp
-		if ($KQL_VerifyOtp.errors) toast($KQL_VerifyOtp.errors[0].message, 'error')
+		if ($GQL_verifyOtp.errors) toast($GQL_verifyOtp.errors[0].message, 'error')
 		else {
 			const me = {
 				email: data.email,

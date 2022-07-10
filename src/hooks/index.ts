@@ -1,8 +1,9 @@
 import cookie, { serialize } from 'cookie'
 import type { Handle } from '@sveltejs/kit'
 import { DOMAIN } from '$lib/config'
-import { KQL_Init } from '$lib/graphql/_kitql/graphqlStores'
+// import { GQL_INIT } from '$houdini'
 import { v4 as uuidv4 } from 'uuid'
+import { HTTP_ENDPOINT } from '$lib/config/env'
 
 export const handle: Handle = async ({ event, resolve }) => {
 	let store, cart, headers, serializedCookie, settings, megamenu, sid, token, domain, geo, me
@@ -13,7 +14,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	domain = DOMAIN || request.headers.get('host')
 	if (cookies.store) store = cookies.store && JSON.parse(cookies.store)
 	try {
-		const INIT = (await KQL_Init.query({ fetch, variables: { domain } })).data
+		const INIT = await (await fetch(`${HTTP_ENDPOINT}/api/init?domain=${domain}`)).json()
 		store = store = INIT?.storeOne
 		settings = INIT?.settings
 		megamenu = INIT?.megamenu

@@ -1,7 +1,6 @@
 <script>
 import ImageLoader from './components/Image/ImageLoader.svelte'
-import { KQL_AddToCart, KQL_Cart } from './graphql/_kitql/graphqlStores'
-import { Cart } from './graphql/_kitql/graphqlTypes'
+import { GQL_addToCart, GQL_cart } from '$houdini'
 import PrimaryButton from './ui/PrimaryButton.svelte'
 import { store, toast } from './util'
 import { fly } from 'svelte/transition'
@@ -21,14 +20,13 @@ function getQty(pid) {
 }
 
 async function refreshCart() {
-	// await KQL_Cart.resetCache()
-	// await KQL_Cart.queryLoad({ variables: { store: store.id }, settings: { policy: 'network-only' } })
+	// await GQL_Cart.resetCache()
 }
 async function addToCart({ pid, vid, options, qty }) {
-	const optiData = $KQL_Cart.data
+	const optiData = $GQL_cart.data
 	optiData.cart.currencyCode = `Removing items...`
 	loading = true
-	const addToCartRes = await KQL_AddToCart.mutate({
+	const addToCartRes = await GQL_addToCart.mutate({
 		variables: { pid, qty, vid, options }
 	})
 	loading = false
@@ -38,9 +36,9 @@ async function addToCart({ pid, vid, options, qty }) {
 	if (qty < 1) toast('Removed from cart', 'success')
 	else toast('Added to the cart', 'success')
 	cart = addToCartRes.data.addToCart
-	await KQL_Cart.query({ variables: { store: store.id }, settings: { policy: 'network-only' } })
+	await GQL_cart.fetch({ variables: { store: store.id } })
 }
-// $: cart = $KQL_Cart.data?.cart || {}
+// $: cart = $GQL_Cart.data?.cart || {}
 </script>
 
 {#if cart?.items && !checkCart(product.id)}

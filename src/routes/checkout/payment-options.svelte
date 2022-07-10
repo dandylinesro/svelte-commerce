@@ -18,11 +18,11 @@ export async function load({ url, params, fetch, session, context }) {
 	try {
 		loading = true
 
-		paymentMethods = (await KQL_PaymentMethods.query({ fetch, variables: { store: store?.id } }))
+		paymentMethods = (await GQL_paymentMethods.fetch({ event, variables: { store: store?.id } }))
 			.data?.paymentMethods.data
 
 		address = (
-			await KQL_Address.query({
+			await GQL_address.fetch({
 				fetch,
 				variables: {
 					id: addressId
@@ -41,12 +41,12 @@ export async function load({ url, params, fetch, session, context }) {
 <script>
 import SEO from '$lib/components/SEO/index.svelte'
 import {
-	KQL_Address,
-	KQL_Cart,
-	KQL_CashfreePayNowNew,
-	KQL_Checkout,
-	KQL_PaymentMethods
-} from '$lib/graphql/_kitql/graphqlStores'
+	GQL_address,
+	GQL_cart,
+	GQL_cashfreePayNowNew,
+	GQL_checkout,
+	GQL_paymentMethods
+} from '$houdini'
 import { store, toast } from '$lib/util'
 import Error from '$lib/Error.svelte'
 import Pricesummary from '$lib/components/Pricesummary.svelte'
@@ -74,7 +74,7 @@ let errorMessage = 'Select a Payment Method',
 		reference: '',
 		remark: '',
 		paymentMethodId: '',
-		amount: Math.floor($KQL_Cart?.data?.cart.subtotal)
+		amount: Math.floor($GQL_cart?.data?.cart.subtotal)
 	},
 	selectedPaymentMethod = { id: '', name: '', text: '', instructions: '', qrcode: '', img: '' }
 
@@ -110,7 +110,7 @@ async function submit(pm) {
 			loading = true
 
 			const res = (
-				await KQL_Checkout.mutate({
+				await GQL_checkout.mutate({
 					variables: {
 						address: address.id
 					}
@@ -132,7 +132,7 @@ async function submit(pm) {
 		try {
 			loading = true
 			const cashFreePayload = (
-				await KQL_CashfreePayNowNew.mutate({
+				await GQL_cashfreePayNowNew.mutate({
 					variables: { address: address.id }
 				})
 			).data.cashfreePayNowNew

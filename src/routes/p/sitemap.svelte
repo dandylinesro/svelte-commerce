@@ -13,7 +13,7 @@
 import Skeleton from '$lib/ui/Skeleton.svelte'
 import Error from '$lib/components/Error.svelte'
 import ImageLoader from '$lib/components/Image/ImageLoader.svelte'
-import { KQL_Megamenu } from '$lib/graphql/_kitql/graphqlStores'
+import { GQL_megamenu } from '$houdini'
 import SEO from '$lib/components/SEO/index.svelte'
 import HeadingUnderline from '$lib/components/HeadingUnderline.svelte'
 import { onMount } from 'svelte'
@@ -22,7 +22,7 @@ const seoProps = {
 	metadescription: 'Sitemap Details'
 }
 onMount(async () => {
-	await KQL_Megamenu.queryLoad({})
+	await GQL_megamenu.fetch({})
 })
 export let err
 </script>
@@ -42,14 +42,14 @@ export let err
 			<HeadingUnderline />
 		</div>
 
-		{#if $KQL_Megamenu.isFetching}
+		{#if $GQL_megamenu.isFetching}
 			<div class="min-h-screen">
 				<Skeleton />
 			</div>
-		{:else if $KQL_Megamenu.data?.megamenu}
+		{:else if $GQL_megamenu.data?.megamenu}
 			<div>
 				<div class="flex flex-col flex-wrap content-center items-start h-rem">
-					{#each $KQL_Megamenu.data?.megamenu as m}
+					{#each $GQL_megamenu.data?.megamenu as m}
 						<div class="w-1/2 sm:w-1/4 lg:w-60 p-2.5 sm:mr-10 sm:mb-10">
 							<a href="/search?q={m.slug}">
 								<div

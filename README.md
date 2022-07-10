@@ -130,3 +130,10 @@ You can support me in various ways:
 - <b>Evangelize</b> - Tweet about the project, take some speaking slot at a tech conference, etc.
 
 <a href='https://ko-fi.com/itswadesh' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/cdn/kofi2.png?v=2' border='0' alt='Buy Me a Coffee' /></a>
+
+Useful find and replace regexp
+
+- `GQL([-_][a-z])` Click on open in editor
+- Press Ctrl + Shift + L (Windows) or Cmd + Shift + L (Mac) to select all matched results
+- Press Ctrl + Shift + P (Windows) or Cmd + Shift + P (Mac)
+- Choose Transform to Lowercase

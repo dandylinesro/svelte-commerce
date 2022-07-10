@@ -16,15 +16,27 @@
 }
 </style>
 
-<script context="module">
-export async function load({ url, params, fetch, session, context }) {
-	const isHome = url.pathname === '/'
+<script context="module" lang="ts">
+import { houdiniClient } from '$graphql/client'
+houdiniClient.init()
+import type { LoadEvent } from '@sveltejs/kit'
+import Cookie from 'cookie-universal'
+const cookies = Cookie()
+export async function load(event: LoadEvent) {
+	const { params, fetch, session, stuff } = event
 	let me = session.me
+	// 	store = null
+	// const domain1 = session.domain
+
+	// try {
+
+	// } catch (e) {}
+	// try {
+	// 	me = (await GQL_me.fetch({ event })).data
+	// } catch (e) {}
 	return {
 		props: {
-			url,
 			me,
-			isHome,
 			store: session.store
 		}
 	}
@@ -33,17 +45,19 @@ export async function load({ url, params, fetch, session, context }) {
 
 <script>
 import '../app.css'
-import { KQL__Init } from '$lib/graphql/_kitql/graphqlStores'
-KQL__Init()
 import { ToastContainer, FlatToast } from 'svelte-toasts'
 import { getStores, navigating, page, session } from '$app/stores'
 import Footer from '$lib/Footer.svelte'
 import Nav from '$lib/Nav.svelte'
 import { loadingDelayed } from '$lib/store'
 import PreloadingIndicator from '$lib/PreloadingIndicator.svelte'
+import { GQL_INIT, GQL_me } from '$houdini'
+import { DOMAIN } from '$lib/config'
 
-export let path, url, sort, me, isHome, store
+export let sort, me, store
 let q
+const url = $page.url.pathname
+const isHome = url === '/'
 </script>
 
 {#if $navigating}

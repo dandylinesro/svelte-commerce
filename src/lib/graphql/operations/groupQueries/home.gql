@@ -73,7 +73,6 @@ query HOME($store: ID, $zip: String) {
 		page
 		pageSize
 		data {
-			id
 			link
 			heading
 			img
@@ -241,26 +240,5 @@ query HOME($store: ID, $zip: String) {
 		count
 		pageSize
 		page
-	}
-	groupByBanner(active: true, pageId: "home", store: $store) {
-		_id {
-			title
-			type
-		}
-		data {
-			link
-			heading
-			img
-			imgCdn
-			sort
-			type
-			pageId
-			store
-			active
-			groupId
-			groupTitle
-			createdAt
-			updatedAt
-		}
 	}
 }

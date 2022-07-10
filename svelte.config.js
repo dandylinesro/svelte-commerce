@@ -1,3 +1,5 @@
+import houdini from 'houdini/preprocess'
+import path from 'path'
 import preprocess from 'svelte-preprocess'
 import adapter from '@sveltejs/adapter-auto'
 import watchAndRun from '@kitql/vite-plugin-watch-and-run'
@@ -7,6 +9,22 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		vite: {
+			resolve: {
+				alias: {
+					$houdini: path.resolve('.', '$houdini'),
+					$graphql: path.resolve('src', 'lib', 'graphql')
+				}
+			},
+			server: {
+				fs: {
+					allow: ['.']
+				},
+				proxy: {
+					'/graphql': HTTP_ENDPOINT,
+					'/api': HTTP_ENDPOINT,
+					'/images': HTTP_ENDPOINT
+				}
+			},
 			plugins: [
 				watchAndRun([
 					{
@@ -14,21 +32,10 @@ const config = {
 						run: 'npm run gen'
 					}
 				])
-			],
-			server: {
-				proxy: {
-					'/graphql': HTTP_ENDPOINT,
-					'/api': HTTP_ENDPOINT,
-					'/images': HTTP_ENDPOINT
-				}
-			}
+			]
 		}
 	},
-	preprocess: [
-		preprocess({
-			postcss: true
-		})
-	]
+	preprocess: [preprocess(), houdini()]
 }
 
 export default config

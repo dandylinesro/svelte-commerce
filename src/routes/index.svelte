@@ -30,7 +30,7 @@ export let banners,
 	domain
 
 let heroBanners
-$: browser && GQL_HOME.fetch()
+$: browser && GQL_HOME.fetch({ variables: { store: store.id } })
 onMount(async () => {
 	// console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', $GQL_HOME)
 	// GQL_HOME.fetch({ variables: { store: store.id } })

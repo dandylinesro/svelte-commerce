@@ -21,15 +21,15 @@ import Search from '$lib/Search.svelte'
 import { GQL_cart, GQL_me } from '$houdini'
 import { signOut } from './services'
 import { onMount } from 'svelte'
-import { toast } from './util'
+import { toast, store } from '$lib/util'
 const loginUrl = '/auth/otp-login'
+export let q, me
 onMount(async () => {
 	try {
 		await GQL_me.fetch({})
-		await GQL_cart.fetch({})
+		await GQL_cart.fetch({ variables: { store: store?.id } })
 	} catch (e) {}
 })
-export let q, me, store
 
 async function handleSignout() {
 	try {
@@ -44,14 +44,6 @@ async function handleSignout() {
 	} finally {
 	}
 }
-
-onMount(async () => {
-	try {
-		await GQL_cart.fetch({ variables: { store: store?.id } })
-	} catch (e) {
-	} finally {
-	}
-})
 </script>
 
 <nav class=" frosted border-gray-100 p-4 shadow-md">

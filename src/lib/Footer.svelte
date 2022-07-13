@@ -10,12 +10,13 @@ import { goto } from '$app/navigation'
 import ImageLoader from '$lib/components/Image/ImageLoader.svelte'
 import Cookie from 'cookie-universal'
 import { onMount } from 'svelte'
+import { toast, store } from '$lib/util'
+
 const cookies = Cookie()
 
 const d = new Date()
 const year = d.getFullYear()
 let selectedCountry = 'fashion.misiki.io'
-let store = cookies.get('store')
 onMount(async () => {})
 function changeCountry() {
 	goto(`https://${selectedCountry}`)

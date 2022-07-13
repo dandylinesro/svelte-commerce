@@ -24,20 +24,14 @@ import Cookie from 'cookie-universal'
 const cookies = Cookie()
 export async function load(event: LoadEvent) {
 	const { params, fetch, session, stuff } = event
-	let me = session.me
-	// 	store = null
-	// const domain1 = session.domain
-
-	// try {
-
-	// } catch (e) {}
-	// try {
-	// 	me = (await GQL_me.fetch({ event })).data
-	// } catch (e) {}
+	let me = session.meq
+	try {
+		await GQL_cart.fetch({ event, variables: { store: store?.id } })
+	} catch (e) {}
 	return {
 		props: {
 			me,
-			store: session.store
+			store: store?.id
 		}
 	}
 }
@@ -51,10 +45,11 @@ import Footer from '$lib/Footer.svelte'
 import Nav from '$lib/Nav.svelte'
 import { loadingDelayed } from '$lib/store'
 import PreloadingIndicator from '$lib/PreloadingIndicator.svelte'
-import { GQL_INIT, GQL_me } from '$houdini'
+import { GQL_cart, GQL_INIT, GQL_me } from '$houdini'
 import { DOMAIN } from '$lib/config'
+import { store, toast } from '$lib/util'
 
-export let sort, me, store
+export let sort, me
 let q
 const url = $page.url.pathname
 const isHome = url === '/'

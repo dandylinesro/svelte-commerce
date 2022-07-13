@@ -15,7 +15,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	if (cookies.store) store = cookies.store && JSON.parse(cookies.store)
 	try {
 		const INIT = await (await fetch(`${HTTP_ENDPOINT}/api/init?domain=${domain}`)).json()
-		store = store = INIT?.storeOne
+		store = INIT?.storeOne
 		settings = INIT?.settings
 		megamenu = INIT?.megamenu
 		if (cookies.me) {

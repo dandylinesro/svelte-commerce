@@ -3,11 +3,13 @@ import SEO from '$lib/components/SEO/index.svelte'
 import Textarea from '$lib/ui/Textarea.svelte'
 import { toast } from '$lib/util'
 import LazyImg from '$lib/components/Image/LazyImg.svelte'
-import { goto } from '$app/navigation'
+import { goto, invalidateAll } from '$app/navigation'
 import Errors from '$lib/ui/Errors.svelte'
 import BackButton from '$lib/ui/BackButton.svelte'
 import { getAPI, post } from '$lib/util/api'
 import PrimaryButton from '$lib/ui/PrimaryButton.svelte'
+import { applyAction, enhance } from '$app/forms'
+import { fireGTagEvent } from '$lib/util/gTag'
 
 const seoProps = {
 	title: 'Reviews Details',
@@ -46,20 +48,20 @@ function onSelect(i) {
 	review.rating = i + 1
 }
 
-async function saveReviewproduct(review) {
-	try {
-		toast('Sending your business rating and review', 'info')
+// async function saveReviewproduct(review) {
+// 	try {
+// 		toast('Sending your business rating and review', 'info')
 
-		await post('reviews', review)
+// 		await post('reviews', review)
 
-		toast('Successfully saved.', 'success')
+// 		toast('Successfully saved.', 'success')
 
-		if (data.product) goto(`${data.ref}#ratings-and-reviews`)
-	} catch (e) {
-		toast(e, 'error')
-	} finally {
-	}
-}
+// 		if (data.product) goto(`${data.ref}#ratings-and-reviews`)
+// 	} catch (e) {
+// 		toast(e, 'error')
+// 	} finally {
+// 	}
+// }
 </script>
 
 <SEO {...seoProps} />
@@ -162,16 +164,38 @@ async function saveReviewproduct(review) {
 
 				<div>
 					<h1 class="mb-2 mr-4 text-lg font-semibold capitalize">Reviews this business</h1>
+					<form
+					  action="/my/reviews/create?/add"
+					  method="POST"
+					  use:enhance="{() => {
+						
+							return async ({ result }) => {
 
-					<form on:submit|preventDefault="{() => saveReviewproduct(review)}">
+	                          console.log(result);
+							  
+											invalidateAll()
+											await applyAction(result)
+						}
+					  }}">
+						<input type="hidden" name="pid" bind:value="{review.pid}" />
+						<input type="hidden" name="rating" bind:value="{review.rating}" />
 						<div class="mb-4">
+						<input type="textarea" placeholder="Description" name="message" bind:value="{review.message}" />
+                       </div>
+
+					   	<div class="ml-auto max-w-max">
+							<button type="submit" class="w-40">SUBMIT</button>
+						</div>
+					</form>
+					<!-- <form on:submit|preventDefault="{() => saveReviewproduct(review)}">
+						
 							<Textarea placeholder="Description" bind:value="{review.message}" />
 						</div>
 
 						<div class="ml-auto max-w-max">
 							<PrimaryButton type="submit" class="w-40">SUBMIT</PrimaryButton>
 						</div>
-					</form>
+					</form> -->
 				</div>
 			</div>
 		</div>

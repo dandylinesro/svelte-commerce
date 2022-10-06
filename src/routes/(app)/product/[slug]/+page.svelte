@@ -892,7 +892,7 @@ function handleMobileCanvas() {
 						<div class="mb-5 text-sm">
 							No reviews yet, be the first one to review the data.product?.
 						</div>
-					{/if}
+					{/if}			
 
 					<button
 						type="button"

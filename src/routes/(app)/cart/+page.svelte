@@ -52,22 +52,22 @@ onMount(() => {
 
 // console.log('cart', cart)
 
-const addToCart = async ({ pid, qty, customizedImg, ix }: any) => {
-	loading[ix] = true
-	const res = await post('carts/add-to-cart', {
-		pid: pid,
-		qty: qty,
-		customizedImg: customizedImg || null
-	})
+// const addToCart = async ({ pid, qty, customizedImg, ix }: any) => {
+// 	loading[ix] = true
+// 	const res = await post('carts/add-to-cart', {
+// 		pid: pid,
+// 		qty: qty,
+// 		customizedImg: customizedImg || null
+// 	})
 
-	// cart = res
-	// $page.data.cart = res
-	// await refreshCart()
+// 	// cart = res
+// 	// $page.data.cart = res
+// 	// await refreshCart()
 
-	await invalidateAll()
+// 	await invalidateAll()
 
-	loading[ix] = false
-}
+// 	loading[ix] = false
+// }
 
 function handleCouponCode(couponCode: string) {
 	selectedCouponCode = couponCode
@@ -473,14 +473,29 @@ async function refreshCart() {
 													</form>
 												</div>
 
+
+													<form 
+													   action="/cart?/clear"
+													   method="POST"
+													   use:enhance="{() => {
+														return async ({ result }) => {
+															result.data.qty > 0
+												           ? fireGTagEvent('remove_from_cart', result.data)
+												           : fireGTagEvent('add_to_cart', result.data)
+															
+														   console.log(result);
+														   
+
+															invalidateAll()
+															await applyAction(result)
+															
+														};				
+													   }}">
+													<input type="hidden" name="pid" value="{item?.pid}" />
+													<input type="hidden" name="qty" value="{item?.qty}" />
+
 												<button
-													on:click="{() =>
-														addToCart({
-															pid: item.pid,
-															qty: -999999,
-															customizedImg: item.customizedImg,
-															ix: ix
-														})}"
+													type="submit"
 													class="flex h-6 w-6 transform items-center justify-center rounded-full bg-gray-200 shadow transition  duration-300 focus:outline-none hover:bg-gray-300 hover:opacity-80 active:scale-95 sm:h-8 sm:w-8">
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
@@ -496,6 +511,7 @@ async function refreshCart() {
 														></path>
 													</svg>
 												</button>
+												</form>
 											</div>
 										</div>
 									</div>

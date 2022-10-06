@@ -17,6 +17,8 @@ import cookie from 'cookie'
 import { fireGTagEvent } from '$lib/util/gTag'
 import Cookie from 'cookie-universal'
 import { gett } from '$lib/utils'
+import { applyAction, enhance } from '$app/forms'
+import { Result } from 'postcss'
 const cookies = Cookie()
 
 export let data
@@ -379,16 +381,30 @@ async function refreshCart() {
 
 											<div class="flex items-center justify-between">
 												<div class="flex items-center justify-center">
+
+													<form 
+													   action="/cart?/del"
+													   method="POST"
+													   use:enhance="{() => {
+														return async ({ result }) => {
+															result.data.qty > 0
+												           ? fireGTagEvent('remove_from_cart', result.data)
+												           : fireGTagEvent('add_to_cart', result.data)
+															
+														   console.log(result);
+														   
+
+															invalidateAll()
+															await applyAction(result)
+															
+														};				
+													   }}">
+														<input type="hidden" name="pid" value="{item?.pid}" />
+													   <input type="hidden" name="qty" value="{item?.qty}" />
+									
+
 													<button
-														disabled="{loading[ix]}"
-														on:click="{() =>
-															addToCart({
-																pid: item.pid,
-																qty: -1,
-																customizedImg: item.customizedImg,
-																ix: ix
-															})}"
-														type="button"
+														type="submit"
 														class="flex h-6 w-6 transform items-center justify-center rounded-full  bg-gray-200 shadow transition  duration-300 focus:outline-none hover:bg-gray-300 hover:opacity-80 active:scale-95 sm:h-8 sm:w-8">
 														<svg
 															xmlns="http://www.w3.org/2000/svg"
@@ -403,6 +419,7 @@ async function refreshCart() {
 																d="M20 12H4"></path>
 														</svg>
 													</button>
+												</form>
 
 													<div
 														class="mx-2 flex h-6 w-6 items-center justify-center text-xs font-bold sm:h-8  sm:w-8  ">
@@ -416,17 +433,29 @@ async function refreshCart() {
 															<span>{item?.qty}</span>
 														{/if}
 													</div>
+													<form 
+													   action="/cart?/add"
+													   method="POST"
+													   use:enhance="{() => {
+														return async ({ result }) => {
+															result.data.qty < 0
+												           ? fireGTagEvent('remove_from_cart', result.data)
+												           : fireGTagEvent('add_to_cart', result.data)
+															
+														   console.log(result);
+														   
+
+															invalidateAll()
+															await applyAction(result)
+															
+														};				
+													   }}">
+													
+													<input type="hidden" name="pid" value="{item?.pid}" />
+													<input type="hidden" name="qty" value="{item?.qty}" />
 
 													<button
-														disabled="{loading[ix]}"
-														on:click="{() =>
-															addToCart({
-																pid: item.pid,
-																qty: +1,
-																customizedImg: item.customizedImg,
-																ix: ix
-															})}"
-														type="button"
+														type="submit"
 														class="flex h-6 w-6 transform items-center justify-center rounded-full  bg-gray-200 shadow transition  duration-300 focus:outline-none hover:bg-gray-300 hover:opacity-80 active:scale-95 sm:h-8 sm:w-8">
 														<svg
 															xmlns="http://www.w3.org/2000/svg"
@@ -441,6 +470,7 @@ async function refreshCart() {
 																d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
 														</svg>
 													</button>
+													</form>
 												</div>
 
 												<button

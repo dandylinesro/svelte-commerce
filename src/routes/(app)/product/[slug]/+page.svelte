@@ -622,6 +622,8 @@ function handleMobileCanvas() {
 											if (customizedImg) {
 												goto(`/checkout/address`)
 											}
+										
+				
 											invalidateAll()
 											await applyAction(result)
 										}

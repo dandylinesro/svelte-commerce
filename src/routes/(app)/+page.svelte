@@ -36,6 +36,7 @@ const seoProps = {
 		url: '/logo.svg'
 	}
 }
+
 if(browser){
 	const homedata = JSON.stringify(data);
 	localStorage.setItem('homedata', homedata);

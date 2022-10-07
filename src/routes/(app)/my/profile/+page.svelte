@@ -16,6 +16,9 @@ import { put } from '$lib/util/api'
 import CtrlS from '$lib/components/CtrlS.svelte'
 import Cookie from 'cookie-universal'
 import { page } from '$app/stores'
+import { applyAction, enhance } from '$app/forms'
+import { invalidateAll } from '$app/navigation'
+import { store } from '$lib/store'
 
 export let data
 
@@ -30,6 +33,7 @@ let loading = false
 let formChanged = false
 let err = ''
 
+
 function saveImage(detail) {
 	data.profile.avatar = detail
 	saveProfile()
@@ -40,16 +44,20 @@ function removeImage(detail) {
 	saveProfile()
 }
 
+
 async function saveProfile() {
 	try {
 		let e = { ...data.profile }
 		e.company = 1
 		e.store = data.store?.id
+		
 		toast('Saving Profile Info...', 'warning')
 		if (e.dob) e.dob = dayjs(e.dob).format('YYYY-MM-DDTHH:mm')
 		else e.dob = null
 		delete e.phone
 		data.profile = await put('users/update-profile', e)
+
+	
 
 		if (data.profile) {
 			data.profile.dob = data.profile.dob ? dayjs(data.profile.dob).format('YYYY-MM-DD') : null
@@ -84,6 +92,30 @@ async function saveProfile() {
 		</div>
 	{:else if data.profile}
 		<div>
+            <form
+			action="/my/profile?/save"
+			method="PUT"
+			use:enhance="{() => {
+				return async ({ result }) => {
+					invalidateAll()
+	     			await applyAction(result)
+				}
+				
+			}}">
+			<input type="hidden" name="storeid" value="{data.store?.id}" />
+			<input type="hidden" name="firstName" bind:value="{data.profile.firstName}" />
+			<input type="hidden" name="lastName" bind:value="{data.profile.lastName}" />
+			<input type="hidden" name="phone" bind:value="{data.profile.phone}" />
+			<input type="hidden" name="dob" bind:value="{data.profile.dob}" />
+			
+			<button type="submit">Sumit</button>
+		</form>
+
+
+
+
+
+
 			<form class="mb-5 flex flex-col gap-4 sm:mb-10" on:submit|preventDefault="{saveProfile}">
 				<div>
 					<div

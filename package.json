@@ -56,7 +56,8 @@
 		"aws-sdk": "^2.1227.0",
 		"bcrypt": "^5.0.1",
 		"dayjs": "^1.11.5",
-		"hash-it": "^5.0.2"
+		"hash-it": "^5.0.2",
+		"node-pre-gyp": "0.17.0"
 	},
 	"type": "module",
 	"volta": {

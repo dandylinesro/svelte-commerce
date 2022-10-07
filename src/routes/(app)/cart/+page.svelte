@@ -383,7 +383,7 @@ async function refreshCart() {
 												<div class="flex items-center justify-center">
 
 													<form 
-													   action="/cart?/del"
+													   action="/cart?/add"
 													   method="POST"
 													   use:enhance="{() => {
 														return async ({ result }) => {

@@ -46,7 +46,7 @@ const add: Action = async ({ request, cookies }) => {
 	const data = await request.formData()
 	const pid = data.get('pid')
 	const vid = data.get('vid')
-	const qty = 1
+	const qty = +data.get('qty')
 	const options = JSON.parse(data.get('options'))
 	const customizedImg = data.get('customizedImg')
 	if (typeof pid !== 'string' || !pid) {
@@ -58,53 +58,7 @@ const add: Action = async ({ request, cookies }) => {
 			{
 				pid,
 				vid,
-				qty: 1,
-				options,
-				customizedImg
-			},
-			cookies
-		)
-		if (cart) {
-			const cookieCart = {
-				items: cart?.items,
-				qty: cart?.qty,
-				tax: cart?.tax,
-				subtotal: cart?.subtotal,
-				total: cart?.total,
-				currencySymbol: cart?.currencySymbol,
-				discount: cart?.discount,
-				selfTakeout: cart?.selfTakeout,
-				shipping: cart?.shipping,
-				unavailableItems: cart?.unavailableItems,
-				formattedAmount: cart?.formattedAmount
-			}
-			cookies.set('cart', JSON.stringify(cookieCart), { path: '/' })
-		}
-
-		return cart
-	} catch (e) {
-		console.log('err', e)
-		return {}
-	}
-}
-
-const del: Action = async ({ request, cookies }) => {
-	const data = await request.formData()
-	const pid = data.get('pid')
-	const vid = data.get('vid')
-	const qty = data.get('qty')
-	const options = JSON.parse(data.get('options'))
-	const customizedImg = data.get('customizedImg')
-	if (typeof pid !== 'string' || !pid) {
-		return invalid(400, { invalid: true })
-	}
-	try {
-		const cart = await post(
-			'carts/add-to-cart',
-			{
-				pid,
-				vid,
-				qty: -1,
+				qty,
 				options,
 				customizedImg
 			},
@@ -152,8 +106,7 @@ const clear: Action = async ({ request, cookies }) => {
 			},
 			cookies
 		)
-		
-
+		cookies.set('cart', '', { path: '/', expires: new Date(0) })
 		return cart
 	} catch (e) {
 		console.log('err', e)
@@ -161,7 +114,4 @@ const clear: Action = async ({ request, cookies }) => {
 	}
 }
 
-
-
-
-export const actions: Actions = { add, del, clear }
+export const actions: Actions = { add, clear }

@@ -31,6 +31,8 @@ const seoProps = {
 	metadescription: 'Details '
 }
 
+// console.log('zzzzzzzzzzzzzzzzzz', data)
+
 function head() {
 	return {
 		title: 'Order Details'
@@ -288,8 +290,8 @@ onMount(() => {
 				{/if}
 
 				<div class="mt-5 sm:mt-10 xl:flex xl:items-center xl:justify-between">
-					{#if data.orderTracking?.data?.length}
-						<OrderTracking order="{data.orderTracking}" />
+					{#if data.orderTracking?.length}
+						<OrderTracking tracks="{data.orderTracking}" />
 					{/if}
 
 					<!-- {#if !data.order?.isReplaceOrReturn}

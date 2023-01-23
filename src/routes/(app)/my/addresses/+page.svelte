@@ -12,13 +12,14 @@
 </style>
 
 <script>
+// import { fetchAddresses } from '$lib/services/AddressService'
 import { goto, invalidateAll } from '$app/navigation'
 import { page } from '$app/stores'
 import { post, del } from '$lib/utils/api'
 import Pagination from '$lib/components/Pagination.svelte'
 import PrimaryButton from '$lib/ui/PrimaryButton.svelte'
 import SEO from '$lib/components/SEO/index.svelte'
-// import { fetchAddresses } from '$lib/services/AddressService'
+
 const seoProps = {
 	title: 'Dashboard - Addresses ',
 	description: 'My Addresses'
@@ -26,8 +27,8 @@ const seoProps = {
 
 export let data
 
-let typingTimer,
-	loading = false
+let typingTimer
+let loadingOnDelete = []
 
 function callSearch(search) {
 	clearTimeout(typingTimer)
@@ -53,7 +54,7 @@ async function saveAddress(e) {
 	try {
 		await post('addresses', { id, store: $page.data.store?.id }, $page.data.origin)
 		// refreshData()
-		invalidateAll()
+		await invalidateAll()
 	} catch (e) {
 		data.err = e
 		// toast(e, 'error')
@@ -62,14 +63,18 @@ async function saveAddress(e) {
 	}
 }
 
-async function remove(id) {
+async function remove(id, index) {
 	try {
+		loadingOnDelete[index] = true
+
 		await del(`addresses/${id}`, $page.data.origin)
+
 		// refreshData()
-		invalidateAll()
+		await invalidateAll()
 	} catch (e) {
 		data.err = e
 	} finally {
+		loadingOnDelete[index] = false
 	}
 }
 
@@ -91,12 +96,11 @@ async function remove(id) {
 
 <div>
 	<h1 class="mb-5 text-xl font-bold md:text-2xl">
-		Saved Addresses ({data.addresses.count})
+		Saved Addresses
 
-		{#if addresses.count}
-			({addresses.count})
+		{#if data.addresses.count}
+			({data.addresses.count})
 		{/if}
-
 	</h1>
 
 	<div class="mb-5 flex items-center justify-between gap-4 sm:gap-6">
@@ -125,7 +129,7 @@ async function remove(id) {
 	{:else if data.addresses?.errors}
 		{data.addresses?.errors}
 	{:else if data.addresses.data.length > 0}
-		<ul class="flex w-full max-w-xl flex-col gap-4">
+		<ul class="mb-5 flex w-full max-w-xl flex-col gap-4">
 			{#each data.addresses.data as i, index}
 				{#if i}
 					<li
@@ -172,16 +176,16 @@ async function remove(id) {
 							<button
 								type="button"
 								class="bg-transparent p-2 text-center font-semibold uppercase text-primary-500 transition duration-300 focus:outline-none hover:bg-gray-100 hover:text-primary-700"
-								on:click="{() => remove(i._id)}">
-								Remove
+								on:click="{() => remove(i._id, index)}">
+								{#if loadingOnDelete[index]}
+									Removing...
+								{:else}
+									Remove
+								{/if}
 							</button>
 						</div>
 					</li>
 				{/if}
-			{:else}
-				<div class="px-6 py-3 text-sm text-gray-500 whitespace-nowrap">
-					No address found, Please add address by clicking add new address button above.
-				</div>
 			{/each}
 		</ul>
 
@@ -195,7 +199,7 @@ async function remove(id) {
 			<span class="mb-3 text-xl font-medium md:text-3xl">Empty Addresses!!</span>
 
 			<span class="mb-5 text-xs">
-				We didn't find any address, Add a address by clicking the plus icon
+				We didn't find any address, Please add address by clicking add new address button above.
 			</span>
 		</div>
 	{/if}

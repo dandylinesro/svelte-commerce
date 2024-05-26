@@ -1,3 +1,4 @@
+
 {
   "$schema": "https://beta.frontmatter.codes/frontmatter.schema.json",
   "frontMatter.taxonomy.contentTypes": [
@@ -51,12 +52,12 @@
   "frontMatter.preview.host": "http://localhost:1313",
   "frontMatter.content.pageFolders": [
     {
-      "path": "[[workspace]]/.github/ISSUE_TEMPLATE",
-      "title": "ISSUE_TEMPLATE"
+      "title": "Sample Title",
+      "path": "[[workspace]]/.github/ISSUE_TEMPLATE"
     },
-    {
-      "path": "[[workspace]]"
-    }
+    "path": {
+      "property": "path_value"
+    },
   ],
   "frontMatter.git.enabled": true
 }
